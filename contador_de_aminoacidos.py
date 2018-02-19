@@ -4,20 +4,19 @@ import os
 import commands
 
 def descobrir_tipo_de_aminoacido(aminoacidos):
-	aminoacidos_ch, aminoacidos_ph = list(), list()
-	#verifica a cor
-	#extrair aminoacido conforme sua cor
+	aminoacidos_e_seu_tipo = dict()
 	ph = '0.102 0.502 0'
 	ch = '0 0 0'
 	for amino in aminoacidos:
+
 		if amino[0:13]  == ph:
-			#print "ponte de hidrogenio:\n" + amino
 			ponte_de_hidrogenio = amino[45:-14].strip().strip('o\n').strip('(')
-			aminoacidos_ph.append(ponte_de_hidrogenio)
-		if amino[0:5] == ch:
-			#print "contato hidrofobico\n" + amino
-			pass
-	#print aminoacidos_ph
+			aminoacidos_e_seu_tipo[ponte_de_hidrogenio] = 'PH'
+
+		elif amino[0:5] == ch:
+			contatos_hidrofobicos = amino[37:-13].strip().strip('o\n').strip('(').strip(')')
+			aminoacidos_e_seu_tipo[contatos_hidrofobicos] = 'CH'
+	return aminoacidos_e_seu_tipo
 
 def encontre_aminoacidos_da_regex(nome_do_arquivo_ps):
 
@@ -41,25 +40,66 @@ def procura_aminoacidos(nome_do_arquivo_ps):
 
 def encontra_arquivos(caminho):
 
-	aminoacidos_por_arquivo = list()
+	aminoacidos_por_arquivo = dict()
 	arquivos = commands.getoutput("ls " + caminho).split()
 
 	for arquivo in arquivos:
-		aminoacidos_por_arquivo.append(procura_aminoacidos(caminho + "/"+ arquivo))
+		aminoacidos_por_arquivo[arquivo] = procura_aminoacidos(caminho + "/"+ arquivo)
 
 	return aminoacidos_por_arquivo
 
 def separar_as_sub_pastas(diretorio_raiz):
 
-	aminoacidos_da_pasta = list()
+	aminoacidos_da_pasta = dict()
 
 	pastas = commands.getoutput("ls " + diretorio_raiz).split()
 
 	for pasta in pastas:
-		aminoacidos_da_pasta.append(encontra_arquivos(diretorio_raiz+pasta))
+		aminoacidos_da_pasta[pasta] = encontra_arquivos(diretorio_raiz+pasta)
 
-	print aminoacidos_da_pasta
+	return aminoacidos_da_pasta
+
+def organizar_dados(diretorio_raiz, option):
+	aminoacidos = []
+	if option == 1:
+		pastas_com_arquivos_ps = separar_as_sub_pastas(diretorio_raiz)
+		for key_pasta in pastas_com_arquivos_ps:
+			conteudo_da_pasta = pastas_com_arquivos_ps[key_pasta]
+			for key_arquivo in conteudo_da_pasta:
+				dados_do_arquivo = conteudo_da_pasta[key_arquivo]
+				for key_resultado in dados_do_arquivo:
+					aminoacidos.append(key_resultado + " " + dados_do_arquivo[key_resultado])
+		return aminoacidos
+
+def imprimir_dados(lista_de_dados):
+	conta_frequencia= {x:lista_de_dados.count(x) for x in set(lista_de_dados)}
+	for key in conta_frequencia:
+		print "\t" + key + ": " + str(conta_frequencia[key]) + "\n"
+
+def menu(diretorio_raiz):
+	menu = "\n__________________________________MENU____________________________________________________\n"
+	question_1 = "\t1) Exibir contagem total separando por contatos hidrofobicos e pontes de hidrogenio\n"
+	question_2 = "\t2) Exibir o mesmo que a primeira questao só que por pasta\n"
+	question_2_sub = "\t\tEscolha a pasta:\n"
+	question_3 = "\t3) Mostrar dados por arquivo:\n"
+	question_3_sub = "\t\tEscolha o arquivo\n:"
+	selecao = "\nEscolha uma opcao:\n"
+	escolha = input(menu+question_1+question_2+question_3+selecao)
+
+	if escolha == 1:
+		imprimir_dados(organizar_dados(diretorio_raiz, escolha))
+
+	elif escolha == 2:
+		sub_escolha = input(question_2_sub)
+		print "Em contrucao...."
+		#chamar uma funcao que exibe so por pasta
+	elif escolha == 3:
+		sub_escolha = input(question_2_sub)
+		print "Em construcao tambem..."
+		new_sub_escolha = input(question_3_sub)
+		print "Em andamento...."
+
 
 if __name__ == '__main__':
 	diretorio_raiz = 'PostScriptVersion/'
-	separar_as_sub_pastas(diretorio_raiz)
+	menu(diretorio_raiz)
