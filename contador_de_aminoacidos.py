@@ -4,11 +4,11 @@ import os
 import commands
 
 def descobrir_aminoacido_e_seu_tipo(aminoacidos):
-	
-	aminoacidos_com_seu_tipo = []	
+
+	aminoacidos_com_seu_tipo = []
 	encontrar_tipo_do_aminoacido_no_paragrafo = r'(0 0 0)|(0.102 0.502 0)'
-	encontra_aminoacido_no_paragrafo = r'(Asp[0-9]{1,5})|(Glu[0-9]{1,5})|(Ala[0-9]{1,5})|(Arg[0-9]{1,5})|(Asn[0-9]{1,5})|(Cys[0-9]{1,5})|(Phe[0-9]{1,5})|(Gly[0-9]{1,5})|(Gln[0-9]{1,5})|(His[0-9]{1,5})|(Ile[0-9]{1,5})|(Leu[0-9]{1,5})|(Lys[0-9]{1,5})|(Met[0-9]{1,5})|(Pyl[0-9]{1,5})|(Pro[0-9]{1,5})|(Ser[0-9]{1,5})|(Sec[0-9]{1,5})|(Tyr[0-9]{1,5})|(Thr[0-9]{1,5})|(Trp[0-9]{1,5})|(Val)'
-	transformar_vetor_de_amino_em_string = ''.join(aminoacidos)
+	encontra_aminoacido_no_paragrafo = r'(Asp[0-9]{1,5})|(Glu[0-9]{1,5})|(Ala[0-9]{1,5})|(Arg[0-9]{1,5})|(Asn[0-9]{1,5})|(Cys[0-9]{1,5})|(Phe[0-9]{1,5})|(Gly[0-9]{1,5})|(Gln[0-9]{1,5})|(His[0-9]{1,5})|(Ile[0-9]{1,5})|(Leu[0-9]{1,5})|(Lys[0-9]{1,5})|(Met[0-9]{1,5})|(Pyl[0-9]{1,5})|(Pro[0-9]{1,5})|(Ser[0-9]{1,5})|(Sec[0-9]{1,5})|(Tyr[0-9]{1,5})|(Thr[0-9]{1,5})|(Trp[0-9]{1,5})|(Val[0-9]{1,5})'
+	transformar_vetor_de_amino_em_string = ' '.join(aminoacidos)
 	resultado_de_aminoacidos = re.finditer(encontra_aminoacido_no_paragrafo, transformar_vetor_de_amino_em_string)
 	resultado_dos_tipos = re.finditer(encontrar_tipo_do_aminoacido_no_paragrafo, transformar_vetor_de_amino_em_string)
 
@@ -16,6 +16,7 @@ def descobrir_aminoacido_e_seu_tipo(aminoacidos):
 
 		if result_tipo.group() == '0 0 0':
 			aminoacidos_com_seu_tipo.append(result_amino.group() + ' ' + 'CH')
+
 		else:
 			aminoacidos_com_seu_tipo.append(result_amino.group() + ' ' + 'PH')
 
@@ -74,14 +75,14 @@ def contar_os_dados_e_imprimir(lista_de_dados):
 
 		for key_arquivo in dicionario_de_arquivos:
 			dicionario_de_aminoacidos = dicionario_de_arquivos[key_arquivo]
-			
+
 			for aminoacido in dicionario_de_aminoacidos:
 				dicionario_de_aminoacidos_total.append(aminoacido)
 
 	conta_frequencia= {x:dicionario_de_aminoacidos_total.count(x) for x in set(dicionario_de_aminoacidos_total)}
 
 	for key in conta_frequencia:
-		print "\t" + key + ": " + str(conta_frequencia[key]) + "\n"
+		print "\t" + key + ": " + str(conta_frequencia[key])
 
 def menu(diretorio_raiz):
 	menu = "\n__________________________________MENU____________________________________________________\n"
